@@ -1,0 +1,10 @@
+! Como R-Occidente usa RIPv2 y el Core usa OSPF, debemos decirle al CORE-1 que importe esas rutas para que el resto de sedes puedan llegar a Occidente.
+
+! En CORE-1
+enable
+configure terminal
+router ospf 1
+ redistribute rip subnets
+ exit
+end
+write memory

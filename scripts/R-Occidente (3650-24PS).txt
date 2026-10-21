@@ -1,0 +1,49 @@
+enable
+configure terminal
+hostname SW-OCCIDENTE
+
+! 1. Crear las VLANs
+vlan 457
+ name Cajas
+vlan 307
+ name Asesores
+vlan 107
+ name Gerencia
+vlan 127
+ name Seguridad
+exit
+
+! 2. Troncal hacia el Router (Gig1/0/10)
+interface GigabitEthernet 1/0/10
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+ exit
+
+! 3. Puertos de acceso para las PCs (Gig1/0/1 a la 1/0/4)
+interface GigabitEthernet 1/0/1
+ switchport mode access
+ switchport access vlan 457
+ no shutdown
+ exit
+
+interface GigabitEthernet 1/0/2
+ switchport mode access
+ switchport access vlan 307
+ no shutdown
+ exit
+
+interface GigabitEthernet 1/0/3
+ switchport mode access
+ switchport access vlan 107
+ no shutdown
+ exit
+
+interface GigabitEthernet 1/0/4
+ switchport mode access
+ switchport access vlan 127
+ no shutdown
+ exit
+
+end
+write memory

@@ -1,0 +1,26 @@
+enable
+configure terminal
+hostname CORE-3
+
+! --- Enlace Serial hacia CORE-1 ---
+interface Serial 2/0
+ description Enlace_Serial_a_CORE-1
+ ip address 10.0.0.6 255.255.255.252
+ no shutdown
+ exit
+
+! --- Enlace de Cobre hacia CORE-2 (Cable Cruzado) ---
+interface FastEthernet 0/0
+ description Enlace_Cobre_a_CORE-2
+ ip address 10.0.0.10 255.255.255.252
+ no shutdown
+ exit
+
+! --- Enrutamiento OSPF ---
+router ospf 1
+ network 10.0.0.4 0.0.0.3 area 0
+ network 10.0.0.8 0.0.0.3 area 0
+ exit
+
+end
+write memory

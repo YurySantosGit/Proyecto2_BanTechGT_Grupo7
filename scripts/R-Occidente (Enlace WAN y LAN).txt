@@ -1,0 +1,53 @@
+enable
+configure terminal
+hostname R-OCCIDENTE
+
+! 1. Fibra hacia el CORE-1
+interface FastEthernet 4/0
+ ip address 10.0.0.14 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Interfaz Física hacia el Switch (Gig9/0)
+interface GigabitEthernet 9/0
+ no ip address
+ no shutdown
+ exit
+
+! 3. Subinterfaces (Router-on-a-Stick)
+interface GigabitEthernet 9/0.457
+ encapsulation dot1Q 457
+ ip address 10.7.0.1 255.255.255.192
+ exit
+
+interface GigabitEthernet 9/0.307
+ encapsulation dot1Q 307
+ ip address 10.7.0.65 255.255.255.224
+ exit
+
+interface GigabitEthernet 9/0.107
+ encapsulation dot1Q 107
+ ip address 10.7.0.97 255.255.255.240
+ exit
+
+interface GigabitEthernet 9/0.127
+ encapsulation dot1Q 127
+ ip address 10.7.0.113 255.255.255.240
+ exit
+
+! 4. RIPv2 (Para las redes de la sede)
+router rip
+ version 2
+ no auto-summary
+ network 10.7.0.0
+ network 10.0.0.12
+ exit
+
+! 5. Ruta por defecto y redistribución hacia el Core
+ip route 0.0.0.0 0.0.0.0 10.0.0.13
+router rip
+ default-information originate
+ exit
+
+end
+write memory

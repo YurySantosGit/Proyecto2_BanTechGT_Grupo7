@@ -1,0 +1,27 @@
+enable
+configure terminal
+hostname CORE-1
+
+! --- Enlace de Fibra hacia CORE-2 ---
+interface FastEthernet 5/0
+ description Enlace_Fibra_a_CORE-2
+ ip address 10.0.0.1 255.255.255.252
+ no shutdown
+ exit
+
+! --- Enlace Serial hacia CORE-3 ---
+interface Serial 2/0
+ description Enlace_Serial_a_CORE-3
+ ip address 10.0.0.5 255.255.255.252
+ clock rate 64000
+ no shutdown
+ exit
+
+! --- Enrutamiento OSPF ---
+router ospf 1
+ network 10.0.0.0 0.0.0.3 area 0
+ network 10.0.0.4 0.0.0.3 area 0
+ exit
+
+end
+write memory

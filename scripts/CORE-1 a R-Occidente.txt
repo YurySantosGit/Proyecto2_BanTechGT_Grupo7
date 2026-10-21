@@ -1,0 +1,16 @@
+enable
+configure terminal
+
+! 1. Interfaz de Fibra hacia R-Occidente
+interface FastEthernet 4/0
+ ip address 10.0.0.13 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Anunciar la red a Occidente en OSPF
+router ospf 1
+ network 10.0.0.12 0.0.0.3 area 0
+ exit
+
+end
+write memory
