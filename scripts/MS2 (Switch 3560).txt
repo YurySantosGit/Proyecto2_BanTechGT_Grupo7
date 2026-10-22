@@ -1,0 +1,45 @@
+enable
+configure terminal
+hostname MS2
+
+! 1. Habilitar enrutamiento y STP
+ip routing
+spanning-tree mode rapid-pvst
+
+! 2. Crear VLANs
+vlan 407
+ name Boveda
+vlan 607
+ name Plataforma
+exit
+
+! 3. EtherChannel hacia MS1 (LACP)
+interface range GigabitEthernet 1/0/1 - 2
+ channel-group 1 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+ exit
+
+! 4. Configurar HSRP y IPs
+interface vlan 407
+ ip address 10.9.0.3 255.255.255.192
+ standby 407 ip 10.9.0.1
+ standby 407 priority 100   ! MS2 es el standby (prioridad menor)
+ standby 407 preempt
+ no shutdown
+ exit
+
+interface vlan 607
+ ip address 10.9.0.67 255.255.255.192
+ standby 607 ip 10.9.0.65
+ standby 607 priority 100
+ standby 607 preempt
+ no shutdown
+ exit
+
+! 5. Ruta por defecto (para que MS2 también sepa salir si se vuelve activo)
+ip route 0.0.0.0 0.0.0.0 10.0.0.22
+
+end
+write memory

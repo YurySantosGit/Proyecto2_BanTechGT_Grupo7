@@ -1,0 +1,65 @@
+enable
+configure terminal
+hostname MS1
+
+! 1. Habilitar el enrutamiento (Capa 3)
+ip routing
+spanning-tree mode rapid-pvst
+
+! 2. Crear VLANs
+vlan 407
+ name Boveda
+vlan 607
+ name Plataforma
+exit
+
+! 3. EtherChannel hacia MS2 (LACP)
+interface range GigabitEthernet 1/0/1 - 2
+ channel-group 1 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+ exit
+
+! 4. Interfaz hacia CORE-3
+interface GigabitEthernet 1/0/3
+ no switchport  ! La convertimos en puerto ruteado
+ ip address 10.0.0.21 255.255.255.252
+ no shutdown
+ exit
+
+! 5. Configurar HSRP y IPs (SVI - Interfaces Virtuales)
+interface vlan 407
+ ip address 10.9.0.2 255.255.255.192
+ standby 407 ip 10.9.0.1
+ standby 407 priority 150   ! MS1 es el activo
+ standby 407 preempt
+ no shutdown
+ exit
+
+interface vlan 607
+ ip address 10.9.0.66 255.255.255.192
+ standby 607 ip 10.9.0.65
+ standby 607 priority 150
+ standby 607 preempt
+ no shutdown
+ exit
+
+! 6. Puertos de acceso para las PCs
+interface GigabitEthernet 1/0/10
+ switchport mode access
+ switchport access vlan 407
+ no shutdown
+ exit
+
+interface GigabitEthernet 1/0/11
+ switchport mode access
+ switchport access vlan 607
+ no shutdown
+ exit
+
+! 7. Ruta por defecto hacia el CORE-3
+ip route 0.0.0.0 0.0.0.0 10.0.0.22
+
+end
+write memory

@@ -1,0 +1,20 @@
+enable
+configure terminal
+
+! 1. Configurar la interfaz hacia Oriente
+interface GigabitEthernet 9/0
+ no switchport  ! (Si es un switch multicapa, o simplemente ponle la IP si es router)
+ ip address 10.0.0.22 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Ruta estática hacia las VLANs de Oriente (MS1)
+ip route 10.9.0.0 255.255.255.0 10.0.0.21
+
+! 3. Redistribuir esa ruta estática en OSPF
+router ospf 1
+ redistribute static subnets
+ exit
+
+end
+write memory

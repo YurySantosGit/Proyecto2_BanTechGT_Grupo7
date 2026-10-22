@@ -1,0 +1,18 @@
+enable
+configure terminal
+
+interface vlan 407
+ standby version 2
+ standby 407 ip 10.9.0.1
+ standby 407 priority 150
+ standby 407 preempt
+ exit
+
+interface vlan 607
+ standby version 2
+ standby 607 ip 10.9.0.65
+ standby 607 priority 150
+ standby 607 preempt
+ exit
+end
+write memory
