@@ -1,0 +1,16 @@
+enable
+configure terminal
+
+! 1. Interfaz hacia R-CENTRAL1
+interface FastEthernet 9/0
+ ip address 10.0.0.25 255.255.255.252
+ no shutdown
+ exit
+
+! 2. OSPF
+router ospf 1
+ network 10.0.0.24 0.0.0.3 area 0
+ exit
+
+end
+write memory

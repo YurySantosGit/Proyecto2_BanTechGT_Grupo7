@@ -1,0 +1,43 @@
+enable
+configure terminal
+hostname SW-CENTRAL
+spanning-tree mode rapid-pvst
+
+! 1. Crear VLANs
+vlan 148
+ name Core_BD
+vlan 288
+ name Web_Apps
+vlan 108
+ name NOC
+exit
+
+! 2. ETHERCHANNEL (LACP) hacia R-CENTRAL2
+interface range GigabitEthernet 1/0/1 - 2
+ channel-group 1 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ no shutdown
+ exit
+
+! 3. Puertos de los Servidores
+interface GigabitEthernet 1/0/10
+ switchport mode access
+ switchport access vlan 148
+ no shutdown
+ exit
+
+interface GigabitEthernet 1/0/11
+ switchport mode access
+ switchport access vlan 288
+ no shutdown
+ exit
+
+interface GigabitEthernet 1/0/12
+ switchport mode access
+ switchport access vlan 108
+ no shutdown
+ exit
+
+end
+write memory
